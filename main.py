@@ -5,127 +5,88 @@ import os
 import follow_line
 import drive_to
 import pressure_pad
-
 from machine import UART, Pin
-
 from XRPLib.differential_drive import DifferentialDrive
 from XRPLib.servo import Servo
 
-# Settings
-SERVO_PORT = 1
-UART_BAUDRATE = 115200
-RESTART_WAIT = 5.0              # How long to wait for Coral Micro to boot (sec)
-SEARCH_TURN_SPEED = 20.0        # Drive speed when searching
-LINEUP_TURN_SPEED = 12.0        # Drive speed when lining up object
-DRIVE_SPEED = 20.0              # Drive speed when not bound by distance
-MAX_EFFORT = 0.5                # Drive speed when driving by distance
-BASKET_X_TARGET = 0.4           # Where the basket X should be for pickup
-BASKET_X_DEADZONE = 0.02        # Basket center X can be lined up +/- this val
-BASKET_Y_TARGET = 0.82          # Where the basket Y should be for pickup
-BASKET_Y_DEADZONE = 0.02        # Basket center Y can be lined up +/- this val
-TARGET_X_TARGET = 0.36          # Where the target X should be for dropoff
-TARGET_X_DEADZONE = 0.02        # Target center X can be lined up +/- this val
-TARGET_Y_TARGET = 0.8           # Where the target Y should be for dropoff
-TARGET_Y_DEADZONE = 0.05        # Target center Y can be lined up +/- this val
-SERVO_HOME = 180.0              # Arm in the collapsed position (degrees)
-SERVO_PICKUP = 12.0             # Arm in the pickup position (degrees)
-SERVO_CARRY = 40.0              # Arm in the carry basket position (degrees)
-PICKUP_INCREMENTS = 10          # Perform servo lift in increments
-PICKUP_DISTANCE = 18.0          # How far to drive backwards to get basket (cm)
-DROPOFF_DISTANCE = 15.0         # How far to drive backwards to drop off (cm)
-VICTORY_TURN_DEGREES = 90.0     # How far to dance
-NUM_VICTORY_TURNS = 2           # How many back and forth turns to do
+#configure connection
+uart = UART(
+    0,
+    baudrate=UART_BAUDRATE,
+    tx=Pin(0),
+    rx=Pin(1),
+    timeout=200,
+)
 
 # Magical empirical constant to perform degrees of robot rotation using
-# encoder raw output (warning: not accurate)
 WHEEL_ROT_PER_ROBOT_ROT = 2.42
 
 # Configure encoded motors and servo
 drivetrain = DifferentialDrive.get_default_differential_drive()
 servo = Servo.get_default_servo(SERVO_PORT)
 
-# State machine
-# 0: Follow the line
-# 1: Drive towards the pressure pad
-# 2: Look for the opening
-# 3: Go to the opening
-# 4: Look for the busket in the room
-# 5: Drive towards the basket
-# 6: Pick up the basket
-# 7: Look for the arrow
-# 8: Go to the arrow
-# 9: Follow the line
-# 10: Stop
 current_state = 0
 current_position = [0.0, 0.0, 0.0]
 
-def main():
-    global uart
-    global drivetrain
-    global servo
-    global current_state
-    global current_position
-    
-    # Setup
-    servo.set_angle(SERVO_HOME)
-    drivetrain.set_speed(
-        left_speed=0.0,
-        right_speed=0.0,
-    )
-    wait_counter = 0
-
-    # Wait for Coral Micro to start running
-    print("Waiting for Coral Micro to boot...")
-    time.sleep(RESTART_WAIT)
-    print("Go!")
-    
-    while True:
-        print(current_state)
+while True:
         
-        if current_state == 0:
+    # --- CHECK FOR STOP COMMAND ---
+    if uart.any():
+        data = uart.readline()
+        print(data)
+        if data:
+            try:
+                cmd = data.decode().strip().upper()
+                print("Received:", cmd)
+
+                if cmd == "STOP":
+                    drivetrain.set_speed(0.0, 0.0)
+                    print("Robot STOPPED!")
+                    continue   # <-- robot freezes until next command
+
+            except Exception as e:
+                print("UART decode error:", e)
+    # --------------------------------
+
+    print(current_state)
+        
+    if current_state == 0:
             
-            follow_line.follow(current_position)
+        follow_line.follow(current_position)
+        current_state = 1
+            
+        # check pressure pad
+        pad = pressure_pad.get_pressure_pad()
+        if pad is not None:
+            print("Pressure pad was detected")
+            drivetrain.set_speed(0.0, 0.0)
             current_state = 1
-            
-            #if pressure is detected
-            pad = pressure_pad.get_pressure_pad()
-            if pad is not None:
-                print("Pressure pad was detected")
-                drivetrain.set_speed(
-                    left_speed=0.0,
-                    right_speed=0.0,
-                )
-                current_state = 1
-                continue
+            continue
         
-        #if the pressure pad is not detected it follows the line for 5cm
-        follow_line.follow_line(position)
+    follow_line.follow_line(position)
         
-        if current_state == 1:
+    if current_state == 1:
             
-            #trying if how the loop will work 
-            drive_to.drive_to(10, 10, 0, 0)
-            current_state = 2
+        drive_to.drive_to(10, 10, 0, 0)
+        current_state = 2
             
-            pad = pressure_pad.get_pressure_pad()
-            if pad is None:
-                print("Pressure pad is lost")
-                current_state = 0
-                continue
+        pad = pressure_pad.get_pressure_pad()
+        if pad is None:
+            print("Pressure pad is lost")
+            current_state = 0
+            continue
             
-            width = pad["xmax"] - pad["xmin"]
-            height = pad["ymax"] - pad["ymin"]
-            x_center = pad["xmin"] + (width / 2.0)
-            y_center = pad["ymin"] + (height / 2.0)
+        width = pad["xmax"] - pad["xmin"]
+        height = pad["ymax"] - pad["ymin"]
+        x_center = pad["xmin"] + (width / 2.0)
+        y_center = pad["ymin"] + (height / 2.0)
             
-            # Print debug string
-            print(f"Lining up pressure pad: ({x_center:.3f}, {y_center:.3f})")
+        print(f"Lining up pressure pad: ({x_center:.3f}, {y_center:.3f})")
 
-            drive_to.drive_to(x_center, y_center, width, height)
+        drive_to.drive_to(x_center, y_center, width, height)
             
-        if current_state == 2:
-            
-            drive_to.drive_to(position[0], position[1])
-            follow_line.follow_line(current_position)
-        return
+    if current_state == 2:
+        drive_to.drive_to(position[0], position[1])
+        follow_line.follow_line(current_position)
+
 main()        
