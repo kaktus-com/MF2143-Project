@@ -1,7 +1,10 @@
 import time
 import json
 import sys
+import os
 import follow_line
+import drive_to
+import pressure_pad
 
 from machine import UART, Pin
 
@@ -54,12 +57,14 @@ servo = Servo.get_default_servo(SERVO_PORT)
 # 9: Follow the line
 # 10: Stop
 current_state = 0
+current_position = [0.0, 0.0, 0.0]
 
 def main():
     global uart
     global drivetrain
     global servo
     global current_state
+    global current_position
     
     # Setup
     servo.set_angle(SERVO_HOME)
@@ -75,11 +80,16 @@ def main():
     print("Go!")
     
     while True:
+        print(current_state)
         
         if current_state == 0:
             
-            #if the pressure pad is detected
-            if pressure_pad:
+            follow_line.follow(current_position)
+            current_state = 1
+            
+            #if pressure is detected
+            pad = pressure_pad.get_pressure_pad()
+            if pad is not None:
                 print("Pressure pad was detected")
                 drivetrain.set_speed(
                     left_speed=0.0,
@@ -89,23 +99,33 @@ def main():
                 continue
         
         #if the pressure pad is not detected it follows the line for 5cm
-        follow_line.follow_line()
+        follow_line.follow_line(position)
         
         if current_state == 1:
             
-            #if the basket is lost
-            if pressure_pad is None:
+            #trying if how the loop will work 
+            drive_to.drive_to(10, 10, 0, 0)
+            current_state = 2
+            
+            pad = pressure_pad.get_pressure_pad()
+            if pad is None:
                 print("Pressure pad is lost")
                 current_state = 0
                 continue
             
-            width = pressure_pad["xmax"] - pressure_pad["xmin"]
-            height = pressure_pad["ymax"] - pressure_pad["ymin"]
-            x_center = pressure_pad["xmin"] + (width / 2.0)
-            y_center = pressure_pad["ymin"] + (height / 2.0)
+            width = pad["xmax"] - pad["xmin"]
+            height = pad["ymax"] - pad["ymin"]
+            x_center = pad["xmin"] + (width / 2.0)
+            y_center = pad["ymin"] + (height / 2.0)
             
             # Print debug string
             print(f"Lining up pressure pad: ({x_center:.3f}, {y_center:.3f})")
+
+            drive_to.drive_to(x_center, y_center, width, height)
             
-            drive_to(x_center, y_center, width, height)
-    
+        if current_state == 2:
+            
+            drive_to.drive_to(position[0], position[1])
+            follow_line.follow_line(current_position)
+        return
+main()        

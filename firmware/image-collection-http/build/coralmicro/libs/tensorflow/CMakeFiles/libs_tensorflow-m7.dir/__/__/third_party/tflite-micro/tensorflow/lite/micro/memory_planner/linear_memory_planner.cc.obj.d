@@ -1,0 +1,18 @@
+coralmicro/libs/tensorflow/CMakeFiles/libs_tensorflow-m7.dir/__/__/third_party/tflite-micro/tensorflow/lite/micro/memory_planner/linear_memory_planner.cc.obj: \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/memory_planner/linear_memory_planner.cc \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/memory_planner/linear_memory_planner.h \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/compatibility.h \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/memory_planner/micro_memory_planner.h \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/c/common.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/lib/gcc/arm-none-eabi/9.3.1/include/stdbool.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/lib/gcc/arm-none-eabi/9.3.1/include/stddef.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/lib/gcc/arm-none-eabi/9.3.1/include/stdint.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/lib/gcc/arm-none-eabi/9.3.1/include/stdint-gcc.h \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/c/c_api_types.h \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/core/api/error_reporter.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/arm-none-eabi/include/c++/9.3.1/cstdarg \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/arm-none-eabi/include/c++/9.3.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/c++config.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/arm-none-eabi/include/c++/9.3.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/os_defines.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/arm-none-eabi/include/c++/9.3.1/arm-none-eabi/thumb/v7e-m+dp/hard/bits/cpu_defines.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/arm-none-eabi/include/c++/9.3.1/pstl/pstl_config.h \
+ /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/lib/gcc/arm-none-eabi/9.3.1/include/stdarg.h
