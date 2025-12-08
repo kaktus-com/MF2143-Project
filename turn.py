@@ -1,10 +1,8 @@
+WHEEL_ROT_PER_ROBOT_ROT = 2.42
+SEARCH_TURN_SPEED = 20.0
+
 def turn(drivetrain, degrees):
-    """
-    Very hacky way of turning: simply measure one encoder until it reaches a set
-    point. This is because drivetrain.turn() is bugged and enter a forever loop
-    of turning. Warning: this function is not very accurate!
-    """
-    
+
     # Get starting positions
     left_start = drivetrain.left_motor.get_position()
     right_start = drivetrain.right_motor.get_position()

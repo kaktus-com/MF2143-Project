@@ -13,5 +13,15 @@ from machine import UART, Pin
 #    timeout=200,
 #)
 
+#none of the funcitons are ready yet but they would return the coordinates of the object
 def get_pressure_pad():
+    
+    return
+
+def get_basket():
+    
+    return
+
+def get_arrow():
+    
     return

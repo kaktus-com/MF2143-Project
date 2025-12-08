@@ -1,0 +1,13 @@
+1. I implemented my own voice_commands, if you want to you can use your or connect them together but then you need to write the entire logic
+for the uart configuration and stuff as well as the states in the main loop. 
+
+2. The search around function should search for some time and then return if so that in the main loop we can check for the object it has found, 
+so you need to adjust it. 
+
+3. In the find_stuff file there should be three functions that help us find pad, basket and arrow, they should read from uart and return the
+coordinates of the object that has been found. 
+
+4. In the states file there are description of every state and what the robot should do in it. 
+
+5. For the case when robot goes to the pressure pad i dont think it will be able to use distance sensors to detect opening so i implemented the 
+search_for_line function but you are welcome to try the idea with the opening detection without overwriting any of the files that i have made, pls.

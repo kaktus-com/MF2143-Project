@@ -10,23 +10,66 @@ rangefinder = Rangefinder.get_default_rangefinder()
 reflectance = Reflectance.get_default_reflectance()
 differentialDrive = DifferentialDrive.get_default_differential_drive()
 
-def follow(pos):
-    max_steps = 5
-    previous_time = time.ticks_ms()
-    steps = 0
+def follow():
+    forward = 0.4
+    K = 1.0
+    cycle = 0
 
-    while rangefinder.distance() >= 15 and steps < max_steps:
-        turn_effort = reflectance.get_left() - reflectance.get_right()
-        differentialDrive.arcade(0.4, turn_effort)
-        steps += 1 
+    while True:
+        left  = reflectance.get_left()
+        right = reflectance.get_right()
 
-        now = time.ticks_ms()
-        dt = time.ticks_diff(now, previous_time) / 1000.0
-        previous_time = now
+        turn_effort = (left - right) * K
+        differentialDrive.arcade(forward, turn_effort)
+        time.sleep(0.01)
 
-        # update coordinates
-        coordinates.update_coordinates(0.4, turn_effort, dt, pos)
-        print(pos)
+        cycle += 1
+        if cycle < 50:
+            continue
+        cycle = 0   # reset
+        left_l  = reflectance.get_left()
+        right_l = reflectance.get_right()
+        
+        if left_l > 0.65 or right_l > 0.65:
+            continue
+
+        # WIGGLE LEFT
+        differentialDrive.arcade(0.0, -0.4)
+        time.sleep(0.1)
+        left_l  = reflectance.get_left()
+        right_l = reflectance.get_right()
+
+        if left_l > 0.65 or right_l > 0.65:
+            continue
+
+        # WIGGLE RIGHT
+        differentialDrive.arcade(0.0, 0.4)
+        time.sleep(0.1)
+        left_r  = reflectance.get_left()
+        right_r = reflectance.get_right()
+
+        if left_r > 0.65 or right_r > 0.65:
+            continue
+
+        print("line is over, stopping")
+        break
 
     differentialDrive.stop()
-    print(f"Followed line for {steps} steps. Current position: {pos}")
+
+def follow_steps(steps):
+    forward = 0.4
+
+    for _ in range(steps):
+        left  = reflectance.get_left()
+        right = reflectance.get_right()
+
+        turn_effort = (left - right)
+
+        differentialDrive.arcade(forward, turn_effort)
+
+        time.sleep(0.01)
+
+    differentialDrive.stop()
+
+
+
