@@ -1,8 +1,10 @@
 WHEEL_ROT_PER_ROBOT_ROT = 2.42
 SEARCH_TURN_SPEED = 20.0
 
-def turn(drivetrain, degrees):
+from XRPLib.differential_drive import DifferentialDrive
+drivetrain = DifferentialDrive.get_default_differential_drive()
 
+def turn(degrees):
     # Get starting positions
     left_start = drivetrain.left_motor.get_position()
     right_start = drivetrain.right_motor.get_position()
@@ -32,3 +34,5 @@ def turn(drivetrain, degrees):
             break
 
     drivetrain.set_speed(left_speed=0.0, right_speed=0.0)
+
+    time.sleep(2) # small delay to ensure complete stop
