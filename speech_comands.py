@@ -97,10 +97,15 @@ def action_BC():
 
 def action_CA(): 
     print("Action: (C, A)")
-    current_state = 2
+    current_state = 2 # search for line
 
-def action_CB(): print("Action: (C, B)")
-def action_CC(): print("Action: (C, C)")
+def action_CB(): 
+    print("Action: (C, B)")
+    current_state = 5 # search for bucket
+
+def action_CC(): 
+    print("Action: (C, C)")
+    current_state = 7 #search for arrow
 
 
 # Map (second_word, third_word) -> function
