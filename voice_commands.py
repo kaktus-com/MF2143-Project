@@ -14,12 +14,6 @@ def get_command(uart, current_state):
             cmd = word.strip().lower()
             word = "" 
 
-            if cmd == "down":
-                drivetrain.set_speed(0.0, 0.0)
-                return -1
-
-            if cmd == "go":
-                return 0
 
             return current_state
 
