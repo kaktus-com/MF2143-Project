@@ -1,13 +1,16 @@
 import xrp
 import time
 
+from turn import turn, drivetrain
+from search_around import forward
+from pick_up import pick_up
 # ============================
 # CONSTANTS
 # ============================
 
-WORD_A = "WORD_A"
-WORD_B = "WORD_B"
-WORD_C = "WORD_C"
+WORD_A = "go"
+WORD_B = "left"
+WORD_C = "down"
 
 TIME_FROM_LAST_VOICE_DETECTION_THRESHOLD = 60   # seconds
 
@@ -32,6 +35,25 @@ time_of_last_word = 0.0  # timestamp of last detected word
 # SERVO HELPERS
 # ============================
 
+drivetrain = DifferentialDrive.get_default_differential_drive()
+word = ""
+ch = ""
+
+def get_command(uart):
+    global word
+
+    while uart.any():
+        ch = uart.read(1).decode('utf-8', 'ignore')
+
+        if ch in [' ', '\n', ':']:
+            cmd = word.strip().lower()
+            word = "" 
+
+        word += ch
+
+    return word
+
+
 def servo_down(deg):
     """Move servo further down by deg degrees (accumulates)."""
     global servo_motor_moved_degrees
@@ -49,13 +71,34 @@ def servo_reset():
 # ACTIONS: 9 UNIQUE ACTIONS
 # ============================
 
-def action_AA(): print("Action: (A, A)")
-def action_AB(): print("Action: (A, B)")
-def action_AC(): print("Action: (A, C)")
-def action_BA(): print("Action: (B, A)")
-def action_BB(): print("Action: (B, B)")
-def action_BC(): print("Action: (B, C)")
-def action_CA(): print("Action: (C, A)")
+def action_AA(): 
+    print("Action: (A, A)")
+    turn(45)
+
+def action_AB(): 
+    print("Action: (A, B)")
+    turn(-45)
+
+def action_AC(): 
+    print("Action: (A, C)")
+    forward(20)
+
+def action_BA():
+    print("Action: (B, A)")
+    forward(-20)
+
+def action_BB(): 
+    print("Action: (B, B)")
+    forward(50)
+
+def action_BC(): 
+    print("Action: (B, C)")
+    pick_up()
+
+def action_CA(): 
+    print("Action: (C, A)")
+    current_state = 2
+
 def action_CB(): print("Action: (C, B)")
 def action_CC(): print("Action: (C, C)")
 
@@ -175,6 +218,6 @@ def tick_time_voice_commands():
 
 # while True:
 #     tick_time_voice_commands()
-#     w = voice_get_word()  # replace with your voice detection function
+#     w = get_command()  # replace with your voice detection function
 #     if w:
 #         handle_detected_word(w)
