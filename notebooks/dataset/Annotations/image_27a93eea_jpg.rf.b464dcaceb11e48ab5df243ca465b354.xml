@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>image_27a93eea_jpg.rf.b464dcaceb11e48ab5df243ca465b354.jpg</filename>
+	<path>image_27a93eea_jpg.rf.b464dcaceb11e48ab5df243ca465b354.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Bucket</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>182</xmin>
+			<xmax>339</xmax>
+			<ymin>126</ymin>
+			<ymax>310</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>

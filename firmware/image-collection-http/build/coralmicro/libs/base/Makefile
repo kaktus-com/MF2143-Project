@@ -783,30 +783,6 @@ reset.cc.s:
 	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build && $(MAKE) $(MAKESILENT) -f coralmicro/libs/base/CMakeFiles/libs_base-ums_freertos.dir/build.make coralmicro/libs/base/CMakeFiles/libs_base-ums_freertos.dir/reset.cc.s
 .PHONY : reset.cc.s
 
-serial.obj: serial.cc.obj
-.PHONY : serial.obj
-
-# target to build an object file
-serial.cc.obj:
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build && $(MAKE) $(MAKESILENT) -f coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/build.make coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj
-.PHONY : serial.cc.obj
-
-serial.i: serial.cc.i
-.PHONY : serial.i
-
-# target to preprocess a source file
-serial.cc.i:
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build && $(MAKE) $(MAKESILENT) -f coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/build.make coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.i
-.PHONY : serial.cc.i
-
-serial.s: serial.cc.s
-.PHONY : serial.s
-
-# target to generate assembly for a file
-serial.cc.s:
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build && $(MAKE) $(MAKESILENT) -f coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/build.make coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.s
-.PHONY : serial.cc.s
-
 spi.obj: spi.cc.obj
 .PHONY : spi.obj
 
@@ -1069,9 +1045,6 @@ help:
 	@echo "... reset.obj"
 	@echo "... reset.i"
 	@echo "... reset.s"
-	@echo "... serial.obj"
-	@echo "... serial.i"
-	@echo "... serial.s"
 	@echo "... spi.obj"
 	@echo "... spi.i"
 	@echo "... spi.s"

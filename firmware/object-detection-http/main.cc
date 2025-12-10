@@ -55,7 +55,7 @@
 
 #include "metadata.hpp"
 
-#define ENABLE_HTTP_SERVER 1
+#define ENABLE_HTTP_SERVER 0
 #define DEBUG 1
 
 namespace coralmicro {
@@ -85,7 +85,7 @@ constexpr char kIndexFileName[] = "/index.html";
 constexpr char kCameraStreamUrlPrefix[] = "/camera_stream";
 constexpr char kBoundingBoxPrefix[] = "/bboxes";
 constexpr char kModelPath[] =
-    "/model_int8_edgetpu.tflite";
+    "/model_int8_edgetpu.tflite";  // Change to your model file
 constexpr int kTensorArenaSize = 8 * 1024 * 1024;
 STATIC_TENSOR_ARENA_IN_SDRAM(tensor_arena, kTensorArenaSize);
 static std::vector<uint8_t> *img_ptr;
@@ -188,6 +188,15 @@ HttpServer::Content UriHandler(const char* uri) {
     vTaskSuspend(nullptr);
   }
 
+  // Optional: print operator codes used by the model to know which ops to register
+  const tflite::Model* fb_model = tflite::GetModel(model.data());
+  if (fb_model && fb_model->operator_codes()) {
+    for (size_t i = 0; i < fb_model->operator_codes()->size(); ++i) {
+      auto code = fb_model->operator_codes()->Get(i);
+      printf("model operator %zu builtin_code=%d\n", i, code->builtin_code());
+    }
+  }
+
   // Initialize TPU
   auto tpu_context = EdgeTpuManager::GetSingleton()->OpenDevice();
   if (!tpu_context) {
@@ -197,9 +206,20 @@ HttpServer::Content UriHandler(const char* uri) {
 
   // Initialize ops
   tflite::MicroErrorReporter error_reporter;
-  tflite::MicroMutableOpResolver<3> resolver;
+  // Increase capacity to include all ops your model requires (tune as needed)
+  tflite::MicroMutableOpResolver<12> resolver;
+  // Common ops used by detection models (add or remove according to your model)
   resolver.AddDequantize();
   resolver.AddDetectionPostprocess();
+  resolver.AddPad();                 // <--- PAD required by your model
+  resolver.AddConv2D();
+  resolver.AddDepthwiseConv2D();
+  resolver.AddResizeBilinear();
+  resolver.AddMaxPool2D();
+  resolver.AddAveragePool2D();
+  resolver.AddFullyConnected();
+  resolver.AddMul();
+  resolver.AddAdd();
   resolver.AddCustom(kCustomOp, RegisterCustomOp());
 
   // Initialize TFLM interpreter for inference
@@ -248,25 +268,22 @@ HttpServer::Content UriHandler(const char* uri) {
   const int scores_zero_point = tensor_scores->params.zero_point;
 
   // Convert threshold to fixed point
-  uint8_t score_threshold_quantized = 
-    static_cast<uint8_t>(score_threshold * 256);
+  // Correct quantization: inverse of (q - zp) * scale -> q = round(threshold / scale) + zp
+  int32_t score_threshold_quantized_i =
+    static_cast<int32_t>(std::lround(score_threshold / scores_scale)) + scores_zero_point;
+  if (score_threshold_quantized_i < 0) score_threshold_quantized_i = 0;
+  if (score_threshold_quantized_i > 255) score_threshold_quantized_i = 255;
+  uint8_t score_threshold_quantized =
+    static_cast<uint8_t>(score_threshold_quantized_i);
 
-  // Print input/output details
+  // Debug: print tensor shapes/quant params and a few sample values
 #if DEBUG
-  printf("num_boxes: %d\r\n", num_boxes);
-  printf("num_coords: %d\r\n", num_coords);
-  printf("num_classes: %d\r\n", num_classes);
-  printf("bytes in tensor_bboxes: %d\r\n", tensor_bboxes->bytes);
-  if (tensor_scores->data.data == nullptr) {
-    printf("tensor_scores.data is empty!\r\n");
+  printf("INPUT dims: ");
+  for (int i = 0; i < input_tensor->dims->size; ++i) {
+    printf("%d ", input_tensor->dims->data[i]);
   }
-  printf("input_scale: %f\r\n", input_scale);
-  printf("input_zero_point: %d\r\n", input_zero_point);
-  printf("locs_scale: %f\r\n", locs_scale);
-  printf("locs_zero_point: %d\r\n", locs_zero_point);
-  printf("scores_scale: %f\r\n", scores_scale);
-  printf("scores_zero_point: %d\r\n", scores_zero_point);
-  printf("score_threshold_quantized: %d\r\n", score_threshold_quantized);
+  printf("\ninput_scale=%f input_zp=%d locs_scale=%f locs_zp=%d scores_scale=%f scores_zp=%d quant_thresh=%d\n",
+         input_scale, input_zero_point, locs_scale, locs_zero_point, scores_scale, scores_zero_point, score_threshold_quantized);
 #endif
 
   // Do forever
@@ -464,6 +481,7 @@ HttpServer::Content UriHandler(const char* uri) {
 
     // Print bounding box JSON string
     printf("%s\r\n", bbox_buf);
+    fflush(stdout);
 
     // Sleep to let other tasks run
     // vTaskDelay(pdMS_TO_TICKS(10));
@@ -567,6 +585,7 @@ float CalculateIOU(BBox *bbox1, BBox *bbox2) {
 
 void Main() {
 
+  setvbuf(stdout, nullptr, _IONBF, 0);
   // Say hello
   Blink(3, 500);
 #if DEBUG

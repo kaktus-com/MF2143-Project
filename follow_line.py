@@ -59,17 +59,58 @@ def follow():
 def follow_steps(steps):
     forward = 0.4
 
+    # --- Normal line following for N steps ---
     for _ in range(steps):
         left  = reflectance.get_left()
         right = reflectance.get_right()
-
         turn_effort = (left - right)
-
         differentialDrive.arcade(forward, turn_effort)
-
         time.sleep(0.01)
 
+    # Stop before scanning
     differentialDrive.stop()
+    time.sleep(0.05)
+
+    # Refresh reflectance readings
+    left  = reflectance.get_left()
+    right = reflectance.get_right()
+
+    # --- If line is still strong, no scan needed ---
+    if left > 0.65 or right > 0.65:
+        return
+
+    # --- LOOK AROUND PHASE ---
+
+    # 1. Wiggle LEFT
+    differentialDrive.arcade(0.0, -0.4)
+    time.sleep(0.12)
+    left_check  = reflectance.get_left()
+    right_check = reflectance.get_right()
+    if left_check > 0.65 or right_check > 0.65:
+        differentialDrive.stop()
+        return
+
+    # 2. Wiggle RIGHT
+    differentialDrive.arcade(0.0, 0.4)
+    time.sleep(0.12)
+    left_check  = reflectance.get_left()
+    right_check = reflectance.get_right()
+    if left_check > 0.65 or right_check > 0.65:
+        differentialDrive.stop()
+        return
+
+    # 3. Try moving slightly forward
+    differentialDrive.arcade(0.25, 0.0)
+    time.sleep(0.15)
+    left_check  = reflectance.get_left()
+    right_check = reflectance.get_right()
+    if left_check > 0.65 or right_check > 0.65:
+        differentialDrive.stop()
+        return
+
+    # If all scans failed, just stop normally
+    differentialDrive.stop()
+
 
 
 

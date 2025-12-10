@@ -1,0 +1,3 @@
+coralmicro/libs/tensorflow/CMakeFiles/libs_tensorflow-m4.dir/__/__/third_party/tflite-micro/tensorflow/lite/micro/system_setup.cc.obj: \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/object-detection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/system_setup.cc \
+ /home/kate/Documents/MF2143/MF2143-Project/firmware/object-detection-http/coralmicro/third_party/tflite-micro/tensorflow/lite/micro/system_setup.h

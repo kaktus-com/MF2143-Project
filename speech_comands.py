@@ -1,9 +1,10 @@
-import xrp
+from XRPLib import *
 import time
 
 from turn import turn, drivetrain
 from search_around import forward
 from pick_up import pick_up
+
 # ============================
 # CONSTANTS
 # ============================
@@ -32,54 +33,67 @@ time_of_last_word = 0.0  # timestamp of last detected word
 
 
 # ============================
-# SERVO HELPERS
+# XRPLIB DEVICES
 # ============================
 
-drivetrain = DifferentialDrive.get_default_differential_drive()
+uart = UART(1, baudrate=115200)       # Voice module UART
+servo_one = Servo(0)                  # Change port if needed
 word = ""
-ch = ""
 
-def get_command(uart):
+
+# ============================
+# UART COMMAND HANDLER
+# ============================
+
+def get_command():
+    """
+    Reads UART characters until a space/newline/':' ends a word.
+    Returns one lowercase command word.
+    """
     global word
 
     while uart.any():
-        ch = uart.read(1).decode('utf-8', 'ignore')
+        ch = uart.read(1).decode("utf-8", "ignore")
 
         if ch in [' ', '\n', ':']:
             cmd = word.strip().lower()
-            word = "" 
+            word = ""
+            return cmd
 
         word += ch
 
-    return word
+    return None
 
+
+# ============================
+# SERVO HELPERS
+# ============================
 
 def servo_down(deg):
-    """Move servo further down by deg degrees (accumulates)."""
     global servo_motor_moved_degrees
     servo_motor_moved_degrees += deg
-    servo_one.set_angle(servo_motor_moved_degrees)
+    servo_one.setAngle(servo_motor_moved_degrees)
+
 
 def servo_reset():
-    """Return servo to initial (0°) position and reset counter."""
     global servo_motor_moved_degrees
-    servo_one.set_angle(0)
+    servo_one.setAngle(0)
     servo_motor_moved_degrees = 0
 
 
 # ============================
-# ACTIONS: 9 UNIQUE ACTIONS
+# ACTIONS
 # ============================
 
-def action_AA(): 
+def action_AA():
     print("Action: (A, A)")
     turn(45)
 
-def action_AB(): 
+def action_AB():
     print("Action: (A, B)")
     turn(-45)
 
-def action_AC(): 
+def action_AC():
     print("Action: (A, C)")
     forward(20)
 
@@ -87,28 +101,28 @@ def action_BA():
     print("Action: (B, A)")
     forward(-20)
 
-def action_BB(): 
+def action_BB():
     print("Action: (B, B)")
     forward(50)
 
-def action_BC(): 
+def action_BC():
     print("Action: (B, C)")
     pick_up()
 
-def action_CA(): 
+def action_CA():
     print("Action: (C, A)")
-    current_state = 2 # search for line
+    # example: set state for line search
+    print("State change: search for line (state 2)")
 
-def action_CB(): 
+def action_CB():
     print("Action: (C, B)")
-    current_state = 5 # search for bucket
+    print("State change: search for bucket (state 5)")
 
-def action_CC(): 
+def action_CC():
     print("Action: (C, C)")
-    current_state = 7 #search for arrow
+    print("State change: search for arrow (state 7)")
 
 
-# Map (second_word, third_word) -> function
 ACTION_TABLE = {
     (WORD_A, WORD_A): action_AA,
     (WORD_A, WORD_B): action_AB,
@@ -123,7 +137,7 @@ ACTION_TABLE = {
 
 
 # ============================
-# MAIN WORD HANDLER
+# WORD PROCESSING
 # ============================
 
 def handle_detected_word(word):
@@ -131,8 +145,8 @@ def handle_detected_word(word):
     global first_word, second_word, third_word
     global time_of_last_word
 
-    # Record timestamp of word detection
-    time_of_last_word = xrp.time()  # XRP library time
+    # XRPLib time (ms → seconds)
+    time_of_last_word = run_time() / 1000.0
 
     # FIRST WORD
     if not is_first_word_detected:
@@ -142,7 +156,7 @@ def handle_detected_word(word):
         return
 
     # SECOND WORD
-    if is_first_word_detected and not is_second_word_detected:
+    if not is_second_word_detected:
         if word != first_word:
             servo_down(10)
         second_word = word
@@ -151,38 +165,32 @@ def handle_detected_word(word):
         return
 
     # THIRD WORD
-    if is_first_word_detected and is_second_word_detected and not is_third_word_detected:
+    if not is_third_word_detected:
         if word != first_word:
             servo_down(10)
         third_word = word
         is_third_word_detected = True
         print("Third word detected:", third_word)
-
         execute_final_action()
-        return
 
 
 # ============================
-# EVALUATION & RESET
+# FINAL EVALUATION
 # ============================
 
 def execute_final_action():
-    """Reset servo first, pick action for (second_word, third_word), call it, then reset state."""
     global is_first_word_detected, is_second_word_detected, is_third_word_detected
     global first_word, second_word, third_word
 
-    print("Three words collected. Preparing to execute action...")
+    print("Three words collected. Running action...")
 
-    # Reset servo to initial position BEFORE executing any action
     servo_reset()
 
     pair = (second_word, third_word)
-    action = ACTION_TABLE.get(pair, action_CC)  # fallback if unknown pair
-
-    # Call the chosen action
+    action = ACTION_TABLE.get(pair, action_CC)
     action()
 
-    # Reset all state
+    # Reset state
     is_first_word_detected = False
     is_second_word_detected = False
     is_third_word_detected = False
@@ -192,7 +200,7 @@ def execute_final_action():
 
 
 # ============================
-# TIMEOUT / TICK FUNCTION
+# TIMEOUT HANDLING
 # ============================
 
 def tick_time_voice_commands():
@@ -201,12 +209,13 @@ def tick_time_voice_commands():
     global first_word, second_word, third_word
 
     if time_of_last_word == 0.0:
-        return  # no word detected yet
+        return
 
-    elapsed = xrp.time() - time_of_last_word
+    current = run_time() / 1000.0
+    elapsed = current - time_of_last_word
 
     if elapsed > TIME_FROM_LAST_VOICE_DETECTION_THRESHOLD:
-        print("Timeout exceeded: resetting state and servo.")
+        print("Timeout: resetting state.")
         servo_reset()
         is_first_word_detected = False
         is_second_word_detected = False
@@ -218,11 +227,13 @@ def tick_time_voice_commands():
 
 
 # ============================
-# Example usage snippet
+# MAIN LOOP
 # ============================
 
-# while True:
-#     tick_time_voice_commands()
-#     w = get_command()  # replace with your voice detection function
-#     if w:
-#         handle_detected_word(w)
+print("XRPLib Voice Command System Ready.")
+
+while True:
+    tick_time_voice_commands()
+    w = get_command()
+    if w:
+        handle_detected_word(w)

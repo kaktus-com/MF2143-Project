@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kate/Documents/MF2143/MF2143-Project/firmware/object-detection-http/coralmicro/third_party/nxp/rt1176-sdk/middleware/mcu-boot/src/memory/src/pattern_fill_gcc.S
+
+/home/kate/Documents/MF2143/MF2143-Project/firmware/object-detection-http/coralmicro/third_party/nxp/rt1176-sdk/middleware/mcu-boot/src/startup/crt0_gcc.S
+
+/home/kate/Documents/MF2143/MF2143-Project/firmware/object-detection-http/coralmicro/third_party/nxp/rt1176-sdk/middleware/mcu-boot/targets/MIMXRT1176/src/startup/gcc/startup_MIMXRT1176_cm7.S
+

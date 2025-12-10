@@ -349,20 +349,6 @@ coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.s: cmake_f
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.s"
 	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/libs/base/watchdog.cc -o CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.s
 
-coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/flags.make
-coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj: /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/libs/base/serial.cc
-coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj"
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj -MF CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj.d -o CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj -c /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/libs/base/serial.cc
-
-coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/libs_base-m7_freertos.dir/serial.cc.i"
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/libs/base/serial.cc > CMakeFiles/libs_base-m7_freertos.dir/serial.cc.i
-
-coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/libs_base-m7_freertos.dir/serial.cc.s"
-	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && /home/kate/Documents/MF2143/coralmicro/third_party/toolchain-linux/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/coralmicro/libs/base/serial.cc -o CMakeFiles/libs_base-m7_freertos.dir/serial.cc.s
-
 # Object files for target libs_base-m7_freertos
 libs_base__m7_freertos_OBJECTS = \
 "CMakeFiles/libs_base-m7_freertos.dir/analog.cc.obj" \
@@ -384,8 +370,7 @@ libs_base__m7_freertos_OBJECTS = \
 "CMakeFiles/libs_base-m7_freertos.dir/tempsense.cc.obj" \
 "CMakeFiles/libs_base-m7_freertos.dir/timer.cc.obj" \
 "CMakeFiles/libs_base-m7_freertos.dir/utils.cc.obj" \
-"CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.obj" \
-"CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj"
+"CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.obj"
 
 # External object files for target libs_base-m7_freertos
 libs_base__m7_freertos_EXTERNAL_OBJECTS = \
@@ -496,7 +481,6 @@ coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/timer.cc.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/utils.cc.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/watchdog.cc.obj
-coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/serial.cc.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/nxp/rt1176-sdk/CMakeFiles/libs_nxp_rt1176-sdk_freertos.dir/__/__/__/third_party/nxp/rt1176-sdk/components/osa/fsl_os_abstraction_free_rtos.c.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/nxp/rt1176-sdk/CMakeFiles/libs_nxp_rt1176-sdk_freertos.dir/__/__/__/third_party/nxp/rt1176-sdk/devices/MIMXRT1176/drivers/fsl_lpi2c_freertos.c.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/nxp/rt1176-sdk/CMakeFiles/libs_nxp_rt1176-sdk_freertos.dir/__/__/__/third_party/nxp/rt1176-sdk/devices/MIMXRT1176/drivers/fsl_lpspi_freertos.c.obj
@@ -585,7 +569,7 @@ coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/nxp/rt1176-sdk/
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/nxp/rt1176-sdk/CMakeFiles/libs_nxp_rt1176-sdk-mcmgr_m7.dir/__/__/__/third_party/nxp/rt1176-sdk/middleware/multicore/mcmgr/src/mcmgr_mu_internal.c.obj
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/build.make
 coralmicro/libs/base/liblibs_base-m7_freertos.a: coralmicro/libs/base/CMakeFiles/libs_base-m7_freertos.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX static library liblibs_base-m7_freertos.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Linking CXX static library liblibs_base-m7_freertos.a"
 	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && $(CMAKE_COMMAND) -P CMakeFiles/libs_base-m7_freertos.dir/cmake_clean_target.cmake
 	cd /home/kate/Documents/MF2143/MF2143-Project/firmware/image-collection-http/build/coralmicro/libs/base && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/libs_base-m7_freertos.dir/link.txt --verbose=$(VERBOSE)
 
