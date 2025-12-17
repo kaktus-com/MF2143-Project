@@ -1,9 +1,9 @@
 import time
+from time import sleep
 from XRPLib.board import Board
 from XRPLib.reflectance import Reflectance
 from XRPLib.rangefinder import Rangefinder
 from XRPLib.differential_drive import DifferentialDrive
-import coordinates
 
 board = Board.get_default_board()
 rangefinder = Rangefinder.get_default_rangefinder()
@@ -57,60 +57,18 @@ def follow():
     differentialDrive.stop()
 
 def follow_steps(steps):
-    forward = 0.4
+    count = 0
+    while count < steps:
+        differentialDrive.set_speed(0.4, 0.4)
+        sleep(0.5)
+        count += 1
 
-    # --- Normal line following for N steps ---
-    for _ in range(steps):
-        left  = reflectance.get_left()
-        right = reflectance.get_right()
-        turn_effort = (left - right)
-        differentialDrive.arcade(forward, turn_effort)
-        time.sleep(0.01)
-
-    # Stop before scanning
     differentialDrive.stop()
-    time.sleep(0.05)
-
-    # Refresh reflectance readings
-    left  = reflectance.get_left()
-    right = reflectance.get_right()
-
-    # --- If line is still strong, no scan needed ---
-    if left > 0.65 or right > 0.65:
-        return
-
-    # --- LOOK AROUND PHASE ---
-
-    # 1. Wiggle LEFT
-    differentialDrive.arcade(0.0, -0.4)
-    time.sleep(0.12)
-    left_check  = reflectance.get_left()
-    right_check = reflectance.get_right()
-    if left_check > 0.65 or right_check > 0.65:
-        differentialDrive.stop()
-        return
-
-    # 2. Wiggle RIGHT
-    differentialDrive.arcade(0.0, 0.4)
-    time.sleep(0.12)
-    left_check  = reflectance.get_left()
-    right_check = reflectance.get_right()
-    if left_check > 0.65 or right_check > 0.65:
-        differentialDrive.stop()
-        return
-
-    # 3. Try moving slightly forward
-    differentialDrive.arcade(0.25, 0.0)
-    time.sleep(0.15)
-    left_check  = reflectance.get_left()
-    right_check = reflectance.get_right()
-    if left_check > 0.65 or right_check > 0.65:
-        differentialDrive.stop()
-        return
-
-    # If all scans failed, just stop normally
+    differentialDrive.arcade(0.2, 0.5)
+    sleep(0.4)
     differentialDrive.stop()
 
+follow_steps(10)
 
 
 

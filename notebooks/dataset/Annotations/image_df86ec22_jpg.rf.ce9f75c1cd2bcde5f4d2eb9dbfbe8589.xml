@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>image_df86ec22_jpg.rf.ce9f75c1cd2bcde5f4d2eb9dbfbe8589.jpg</filename>
+	<path>image_df86ec22_jpg.rf.ce9f75c1cd2bcde5f4d2eb9dbfbe8589.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Basket</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>181</xmin>
+			<xmax>206</xmax>
+			<ymin>258</ymin>
+			<ymax>284</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>

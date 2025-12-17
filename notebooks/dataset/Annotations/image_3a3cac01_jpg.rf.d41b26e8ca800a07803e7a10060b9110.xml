@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>image_3a3cac01_jpg.rf.d41b26e8ca800a07803e7a10060b9110.jpg</filename>
+	<path>image_3a3cac01_jpg.rf.d41b26e8ca800a07803e7a10060b9110.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Basket</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>205</xmin>
+			<xmax>236</xmax>
+			<ymin>260</ymin>
+			<ymax>290</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>

@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>image_fc6c138f_jpg.rf.fa3a5110acc623d2e14b09a23e51581d.jpg</filename>
+	<path>image_fc6c138f_jpg.rf.fa3a5110acc623d2e14b09a23e51581d.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Pad</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>163</xmin>
+			<xmax>507</xmax>
+			<ymin>367</ymin>
+			<ymax>513</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>

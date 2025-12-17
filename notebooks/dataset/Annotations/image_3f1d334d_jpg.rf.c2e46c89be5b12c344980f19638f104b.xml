@@ -1,0 +1,29 @@
+<annotation>
+	<folder></folder>
+	<filename>image_3f1d334d_jpg.rf.c2e46c89be5b12c344980f19638f104b.jpg</filename>
+	<path>image_3f1d334d_jpg.rf.c2e46c89be5b12c344980f19638f104b.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>512</width>
+		<height>512</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>basket</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>353</xmin>
+			<xmax>384</xmax>
+			<ymin>332</ymin>
+			<ymax>378</ymax>
+		</bndbox>
+	</object>
+	<metadata>
+	</metadata>
+</annotation>
