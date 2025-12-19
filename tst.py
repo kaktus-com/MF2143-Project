@@ -1,38 +1,33 @@
-import time
+import time 
+from time import sleep
 from machine import UART, Pin
 from XRPLib.differential_drive import DifferentialDrive
 import find_stuff
+from XRPLib.servo import Servo
+from XRPLib.imu import IMU
 
-UART_BAUDRATE = 115200
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+imu = IMU()
 
-uart = UART(
-    0,
-    baudrate=UART_BAUDRATE,
-    tx=Pin(0),
-    rx=Pin(1),
-    timeout=200,
-)
-drivetrain = DifferentialDrive.get_default_differential_drive()
+SERVO_PORT = 2
 
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+servo = Servo.get_default_servo(SERVO_PORT)
 
-def read_coral():
-    """Read one frame of bboxes from Coral."""
-    return find_stuff.get_bboxes(uart)
+def driveStraight(speed, duration):
+    target_heading = imu.get_yaw()   # save current direction
+    kP = 0.02                        # tuning constant
 
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        error = target_heading - imu.get_yaw()
+        correction = kP * error
 
-def main():
-    print("STEP 3: Gentle movement + Coral read test")
+        differentialDrive.arcade(speed, correction)
+        sleep(0.02)
 
-    while True:
-        bbox_arrow, bbox_basket, bbox_pad = read_coral()
-        print("CORAL:", bbox_arrow, bbox_basket, bbox_pad)
-
-        drivetrain.set_speed(4, 4)
-        time.sleep(1.0)
-
-        drivetrain.set_speed(0, 0)
-        time.sleep(1.0)
+    drive.arcade(0, 0)  # stop
 
 
-main()
-
+driveStraight(0.5, 10)
+sleep(100)

@@ -4,71 +4,113 @@ from XRPLib.board import Board
 from XRPLib.reflectance import Reflectance
 from XRPLib.rangefinder import Rangefinder
 from XRPLib.differential_drive import DifferentialDrive
+import find_stuff
+from machine import UART, Pin
+
+UART_BAUDRATE = 115200
+WHEEL_ROT_PER_ROBOT_ROT = 2.42
+SEARCH_TURN_SPEED = 20.0
 
 board = Board.get_default_board()
 rangefinder = Rangefinder.get_default_rangefinder()
 reflectance = Reflectance.get_default_reflectance()
 differentialDrive = DifferentialDrive.get_default_differential_drive()
 
-def follow():
-    forward = 0.4
-    K = 1.0
-    cycle = 0
+uart = UART(
+    0,
+    baudrate=UART_BAUDRATE,
+    tx=Pin(0),
+    rx=Pin(1),
+    timeout=50,
+)
+
+# drive straight for a set time period (defualt 1 second)
+def drive_straight(drive_time: float = 1):
+    drivetrain.set_effort(0.8, 0.8)
+    time.sleep(drive_time)
+    drivetrain.stop()
+
+def turn_robot(degrees):
+    if degrees == 0:
+        return
+
+    left_start  = differentialDrive.left_motor.get_position()
+    right_start = differentialDrive.right_motor.get_position()
+
+    target_rot = abs(degrees) / 360.0 * WHEEL_ROT_PER_ROBOT_ROT
+
+    if degrees > 0:
+        differentialDrive.set_speed(SEARCH_TURN_SPEED, -SEARCH_TURN_SPEED)
+    else:
+        differentialDrive.set_speed(-SEARCH_TURN_SPEED, SEARCH_TURN_SPEED)
 
     while True:
-        left  = reflectance.get_left()
-        right = reflectance.get_right()
+        left_rot  = abs(differentialDrive.left_motor.get_position() - left_start)
+        right_rot = abs(differentialDrive.right_motor.get_position() - right_start)
 
-        turn_effort = (left - right) * K
-        differentialDrive.arcade(forward, turn_effort)
+        if max(left_rot, right_rot) >= target_rot:
+            break
+
         time.sleep(0.01)
 
-        cycle += 1
-        if cycle < 50:
-            continue
-        cycle = 0   # reset
-        left_l  = reflectance.get_left()
-        right_l = reflectance.get_right()
-        
-        if left_l > 0.65 or right_l > 0.65:
-            continue
+    differentialDrive.set_speed(0.0, 0.0)
+    time.sleep(0.1)
 
-        # WIGGLE LEFT
-        differentialDrive.arcade(0.0, -0.4)
-        time.sleep(0.1)
-        left_l  = reflectance.get_left()
-        right_l = reflectance.get_right()
 
-        if left_l > 0.65 or right_l > 0.65:
-            continue
+def follow():
+    forward = 0.3
+    K = 1.0
+    LINE_THRESH = 0.65
 
-        # WIGGLE RIGHT
-        differentialDrive.arcade(0.0, 0.4)
-        time.sleep(0.1)
-        left_r  = reflectance.get_left()
-        right_r = reflectance.get_right()
+    while True:
+        left = reflectance.get_left()
+        right = reflectance.get_right()
 
-        if left_r > 0.65 or right_r > 0.65:
+        if left > LINE_THRESH or right > LINE_THRESH:
+            turn_effort = (left - right) * K
+            differentialDrive.arcade(forward, turn_effort)
+            time.sleep(0.01)
             continue
 
-        print("line is over, stopping")
+        differentialDrive.stop()
+        time.sleep(0.05)
+
+        differentialDrive.arcade(0.2, -0.4)
+        time.sleep(0.12)
+        differentialDrive.stop()
+
+        if reflectance.get_left() > LINE_THRESH or reflectance.get_right() > LINE_THRESH:
+            continue
+
+        differentialDrive.arcade(0.2, 0.4)
+        time.sleep(0.12)
+        differentialDrive.stop()
+
+        if reflectance.get_left() > LINE_THRESH or reflectance.get_right() > LINE_THRESH:
+            continue
+
         break
 
     differentialDrive.stop()
 
+
 def follow_steps(steps):
+    global uart
     count = 0
     while count < steps:
-        differentialDrive.set_speed(0.4, 0.4)
-        sleep(0.5)
+        left = reflectance.get_left()
+        right = reflectance.get_right()
+
+        diff = left - right
+        turn_effort = diff * 0.5
+
+        differentialDrive.arcade(0.3, turn_effort)
+        sleep(0.2)
         count += 1
 
     differentialDrive.stop()
-    differentialDrive.arcade(0.2, 0.5)
-    sleep(0.4)
-    differentialDrive.stop()
+    sleep(0.1)
 
-follow_steps(10)
-
-
-
+    print("turn left")
+    differentialDrive.turn(90,0.3)
+    sleep(1)

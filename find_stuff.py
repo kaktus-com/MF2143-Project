@@ -11,55 +11,54 @@ uart = UART(
     timeout=200,
 )
 
+uart_buffer = ""
+
 def get_bboxes(uart):
+    global uart_buffer
 
-    # Read UART line
-    line = uart.readline()
-
-    # Debug: Show raw UART bytes
-    print("UART RAW:", line)
+    line = uart.read()
 
     if line is None:
-        print("UART returned None")
         return (None, None, None)
 
-    # Try to decode JSON
     try:
-        decoded = line.decode("utf-8")
-        print("UART DECODED:", decoded)
+        uart_buffer += line.decode("utf-8")
+    except:
+        uart_buffer = ""
+        return (None, None, None)
 
-        bboxes = json.loads(decoded)
-        print("PARSED JSON:", bboxes)
+    if "}" not in uart_buffer:
+        return (None, None, None)
 
-    except Exception as e:
-        print("JSON ERROR:", e)
+    try:
+        json_str, uart_buffer = uart_buffer.split("}\r\n", 1)
+        json_str += "}"
+    except:
+        uart_buffer = ""
+        return (None, None, None)
+
+    try:
+        data = json.loads(json_str)
+    except:
+        uart_buffer = ""
         return (None, None, None)
 
     bbox_arrow = None
     bbox_basket = None
     bbox_pad = None
 
-    # Iterate through detections
-    for bbox in bboxes["bboxes"]:
-        print("FOUND BBOX:", bbox)
+    for bbox in data["bboxes"]:
 
-        if bbox["id"] == 1:
-            if bbox_arrow is None or bbox["score"] > bbox_arrow["score"]:
-                bbox_arrow = bbox
-                print("UPDATED ARROW:", bbox_arrow)
-
-        elif bbox["id"] == 2:
-            if bbox_basket is None or bbox["score"] > bbox_basket["score"]:
-                bbox_basket = bbox
-                print("UPDATED BASKET:", bbox_basket)
-
-        elif bbox["id"] == 3:
+        if bbox["id"] in (2, 5):
             if bbox_pad is None or bbox["score"] > bbox_pad["score"]:
                 bbox_pad = bbox
-                print("UPDATED PAD:", bbox_pad)
 
-    print("FINAL SELECTED:", bbox_arrow, bbox_basket, bbox_pad)
+        elif bbox["id"] in (1, 4):
+            if bbox_basket is None or bbox["score"] > bbox_basket["score"]:
+                bbox_basket = bbox
+
+        elif bbox["id"] == 3:
+            if bbox_arrow is None or bbox["score"] > bbox_arrow["score"]:
+                bbox_arrow = bbox
+
     return (bbox_arrow, bbox_basket, bbox_pad)
-
-while True:
-    bbox_arrow, bbox_basket, bbox_pad = get_bboxes(uart)

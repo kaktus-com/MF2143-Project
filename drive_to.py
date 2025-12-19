@@ -75,13 +75,15 @@ def drive_to(x_center, y_center, width, height):
             return
 
 
-def drive_to_pad(x_center, y_center, width, height):
+def drive_to_pad(x_center, y_center, width, height, current_state):
     global drivetrain
 
+    # Keep a small wait counter like drive_to
     drive_to_pad.wait_counter = getattr(drive_to_pad, "wait_counter", 0)
 
     x_done = False
 
+    # ---------- X ALIGNMENT ----------
     if x_center < (TARGET_X_TARGET - TARGET_X_DEADZONE):
         drivetrain.set_speed(-LINEUP_TURN_SPEED, LINEUP_TURN_SPEED)
         return
@@ -94,6 +96,7 @@ def drive_to_pad(x_center, y_center, width, height):
         drivetrain.set_speed(0.0, 0.0)
         x_done = True
 
+    # ---------- DRIVE FORWARD ----------
     if x_done:
         if y_center < (TARGET_Y_TARGET - TARGET_Y_DEADZONE):
             drivetrain.set_speed(DRIVE_SPEED, DRIVE_SPEED)
@@ -106,7 +109,11 @@ def drive_to_pad(x_center, y_center, width, height):
             return
 
         else:
+            # In target zone → stop after stable frames
             drive_to_pad.wait_counter += 1
             if drive_to_pad.wait_counter >= 5:
                 drivetrain.set_speed(0.0, 0.0)
+                time.sleep(1.0)
             return
+
+    current_state = 2
