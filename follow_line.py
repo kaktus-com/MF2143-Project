@@ -60,11 +60,12 @@ def turn_robot(degrees):
 def follow():
     forward = 0.3
     K = 1.0
-    LINE_THRESH = 0.65
+    LINE_THRESH = 0.8
 
     while True:
         left = reflectance.get_left()
         right = reflectance.get_right()
+        
 
         if left > LINE_THRESH or right > LINE_THRESH:
             turn_effort = (left - right) * K
@@ -75,23 +76,32 @@ def follow():
         differentialDrive.stop()
         time.sleep(0.05)
 
-        differentialDrive.arcade(0.2, -0.4)
+        differentialDrive.turn(-5, 0.5)
         time.sleep(0.12)
         differentialDrive.stop()
+        
+        left = reflectance.get_left()
+        right = reflectance.get_right()
+        print(left, right)
 
-        if reflectance.get_left() > LINE_THRESH or reflectance.get_right() > LINE_THRESH:
+        if left > LINE_THRESH or right > LINE_THRESH:
             continue
 
-        differentialDrive.arcade(0.2, 0.4)
+        differentialDrive.turn(5, 0.5)
         time.sleep(0.12)
         differentialDrive.stop()
+        
+        left = reflectance.get_left()
+        right = reflectance.get_right()
+        print(left, right)
 
-        if reflectance.get_left() > LINE_THRESH or reflectance.get_right() > LINE_THRESH:
+        if left > LINE_THRESH or right > LINE_THRESH:
             continue
 
         break
 
     differentialDrive.stop()
+    return
 
 
 def follow_steps(steps):
@@ -112,5 +122,6 @@ def follow_steps(steps):
     sleep(0.1)
 
     print("turn left")
-    differentialDrive.turn(90,0.3)
+    differentialDrive.turn(90,0.5)
+    differentialDrive.straight(0.5, 0.4)
     sleep(1)

@@ -359,6 +359,7 @@ def main():
                     count += 1
 
                     if bbox_basket is not None:
+                        current_state = 8
                         differentialDrive.stop()
                         count = 0
                         break
@@ -366,12 +367,7 @@ def main():
                 none_count = 0
                 count = 0
 
-            if bbox_basket is None:
-                current_state = 10
-                differentialDrive.turn(-90, 0.3)
-                continue
-            
-            current_state = 8
+            current_state = 10
             continue
 
         elif current_state == 10:
